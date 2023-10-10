@@ -1,12 +1,27 @@
 'use client'
 import Image from 'next/image'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {Search} from '../components/search'
+import {useSearchParams} from 'next/navigation'  // Correct import
 import {SearchResults} from '../components/searchResults'
 import PersonData from './utils/types'
+import {fetchData} from "@/actions";
 
 export default function Home() {
   const [data, setData] = useState<(PersonData)[]>([]);
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const name = searchParams.get('search');
+    if (name) {
+      const fetchQueryData = async () => {
+        const result: PersonData[] = await fetchData({ name });
+        setData(result);
+      };
+      fetchQueryData();
+    }
+  }, [searchParams]);
+
   return (
     <main className="flex flex-col min-h-screen p-4 sm:p-16">
       <h1 className='text-center text-xl pb-8'> עזרה באיתור נעדרים וחטופים</h1>
